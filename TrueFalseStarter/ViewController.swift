@@ -1,4 +1,4 @@
-//
+
 //  ViewController.swift
 //  TrueFalseStarter
 //
@@ -12,35 +12,14 @@ import AudioToolbox
 
 class ViewController: UIViewController {
     
-    let questionsPerRound = 4
+    let questionsPerRound = 6
     var questionsAsked = 0
     var correctQuestions = 0
-    var indexOfSelectedQuestion: Int = 0
+    var questions = Questions()
+    var questionSet: [Trivia] = []
     var defaultChoiceButtonColor: UIColor = UIColor.white
     
     var gameSound: SystemSoundID = 0
-    
-    struct Trivia {
-        let question: String
-        let firstOption: String
-        let secondOption: String
-        let thirdOption: String
-        let fourthOption: String
-        let correct: Int
-    }
-    
-    let questionList: [Trivia] = [
-        Trivia(question: "This was the only US President to serve more than two consecutive terms.", firstOption: "George Washington", secondOption: "Franklin D. Roosevelt", thirdOption: "Woodrow Wilson", fourthOption: "Andrew Jackson", correct: 2),
-        Trivia(question: "Which of the following countries has the most residents?", firstOption: "Nigeria", secondOption: "Russia", thirdOption: "Iran", fourthOption: "Vietnam", correct: 1),
-        Trivia(question: "In what year was the United Nations founded?", firstOption: "1918", secondOption: "1919", thirdOption: "1945", fourthOption: "1954", correct: 3),
-        Trivia(question: "The Titanic departed from the United Kingdom, where was it supposed to arrive?", firstOption: "Paris", secondOption: "Washington D.C.", thirdOption: "New York City", fourthOption: "Boston", correct: 3),
-        Trivia(question: "Which nation produes the most oil?", firstOption: "Iran", secondOption: "Iraq", thirdOption: "Brazil", fourthOption: "Canada", correct: 4),
-        Trivia(question: "Which country has most recently won consecurive World Cups in soccer?", firstOption: "Italy", secondOption: "Brazil", thirdOption: "Argentina", fourthOption: "Spain", correct: 2),
-        Trivia(question: "Which of the following rivers is longest?", firstOption: "Yangtze", secondOption: "Mississippi", thirdOption: "Congo", fourthOption: "Mekong", correct: 2),
-        Trivia(question: "Which city is the oldest?", firstOption: "Mexico City", secondOption: "Cape Town", thirdOption: "San Juan", fourthOption: "Sydney", correct: 1),
-        Trivia(question: "Which country was the first to allow women to vote in national elections?", firstOption: "Poland", secondOption: "United States", thirdOption: "Sweden", fourthOption: "Senegal", correct: 1),
-        Trivia(question: "Which of these countries won the most medals in the 2012 Summer Olympics?", firstOption: "France", secondOption: "Germany", thirdOption: "Japan", fourthOption: "Great Britain", correct: 4)
-        ]
     
     @IBOutlet weak var questionField: UILabel!
     @IBOutlet weak var playAgainButton: UIButton!
@@ -71,6 +50,7 @@ class ViewController: UIViewController {
         fourthChoiceButton.layer.cornerRadius = 15
         playAgainButton.layer.cornerRadius = 15
         defaultChoiceButtonColor = firstChoiceButton.backgroundColor!
+        questionSet = questions.questionSet(for: questionsPerRound)
     }
     
     func resetButtonColor() {
@@ -82,8 +62,9 @@ class ViewController: UIViewController {
     
     func displayQuestion() {
         resetButtonColor()
-        indexOfSelectedQuestion = GKRandomSource.sharedRandom().nextInt(upperBound: questionList.count)
-        let questionDictionary = questionList[indexOfSelectedQuestion]
+        
+        
+        let questionDictionary = questionSet[questionsAsked]
         questionField.text = questionDictionary.question
         firstChoiceButton.setTitle(questionDictionary.firstOption, for: .normal)
         secondChoiceButton.setTitle(questionDictionary.secondOption, for: .normal)
@@ -109,7 +90,8 @@ class ViewController: UIViewController {
         // Increment the questions asked counter
         questionsAsked += 1
         
-        let selectedQuestionDict = questionList[indexOfSelectedQuestion]
+        let selectedQuestionDict = questionSet[questionsAsked - 1]
+        print(selectedQuestionDict.correct)
         let correctAnswer = selectedQuestionDict.correct
         
         if (sender === firstChoiceButton && correctAnswer == 1) || (sender === secondChoiceButton && correctAnswer == 2) || (sender === thirdChoiceButton && correctAnswer == 3) || (sender === fourthChoiceButton && correctAnswer == 4) {
@@ -159,6 +141,7 @@ class ViewController: UIViewController {
         
         questionsAsked = 0
         correctQuestions = 0
+        questionSet = questions.questionSet(for: questionsPerRound)
         nextRound()
     }
     
