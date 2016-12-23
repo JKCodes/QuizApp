@@ -16,6 +16,7 @@ class ViewController: UIViewController {
     var questionsAsked = 0
     var correctQuestions = 0
     var indexOfSelectedQuestion: Int = 0
+    var defaultChoiceButtonColor: UIColor = UIColor.white
     
     var gameSound: SystemSoundID = 0
     
@@ -28,16 +29,18 @@ class ViewController: UIViewController {
         let correct: Int
     }
     
-    let questions = Trivia(question: <#T##String#>, firstOption: <#T##String#>, secondOption: <#T##String#>, thirdOption: <#T##String#>, fourthOption: <#T##String#>, correct: <#T##Int#>)
-    
-    let trivia: [[String : String]] = [
-        ["Question": "This was the only US President to serve more than two consecutive terms.", "Choice 1": "George Washington", "Choice 2": "Franklin D. Roosevelt", "Choice 3": "Woodrow Wilson", "Choice 4": "Andrew Jackson", "Correct": "2"],
-        ["Question": "Which of the following countries has the most residents", "Choice 1", "Nigeria", "Choice 2": "Russia", "Choice 3": "Iran", "Choice 4": "Vietnam"]
-        ["Question": "Only female koalas can whistle", "Answer": "False"],
-        ["Question": "Blue whales are technically whales", "Answer": "True"],
-        ["Question": "Camels are cannibalistic", "Answer": "False"],
-        ["Question": "All ducks are birds", "Answer": "True"]
-    ]
+    let questionList: [Trivia] = [
+        Trivia(question: "This was the only US President to serve more than two consecutive terms.", firstOption: "George Washington", secondOption: "Franklin D. Roosevelt", thirdOption: "Woodrow Wilson", fourthOption: "Andrew Jackson", correct: 2),
+        Trivia(question: "Which of the following countries has the most residents?", firstOption: "Nigeria", secondOption: "Russia", thirdOption: "Iran", fourthOption: "Vietnam", correct: 1),
+        Trivia(question: "In what year was the United Nations founded?", firstOption: "1918", secondOption: "1919", thirdOption: "1945", fourthOption: "1954", correct: 3),
+        Trivia(question: "The Titanic departed from the United Kingdom, where was it supposed to arrive?", firstOption: "Paris", secondOption: "Washington D.C.", thirdOption: "New York City", fourthOption: "Boston", correct: 3),
+        Trivia(question: "Which nation produes the most oil?", firstOption: "Iran", secondOption: "Iraq", thirdOption: "Brazil", fourthOption: "Canada", correct: 4),
+        Trivia(question: "Which country has most recently won consecurive World Cups in soccer?", firstOption: "Italy", secondOption: "Brazil", thirdOption: "Argentina", fourthOption: "Spain", correct: 2),
+        Trivia(question: "Which of the following rivers is longest?", firstOption: "Yangtze", secondOption: "Mississippi", thirdOption: "Congo", fourthOption: "Mekong", correct: 2),
+        Trivia(question: "Which city is the oldest?", firstOption: "Mexico City", secondOption: "Cape Town", thirdOption: "San Juan", fourthOption: "Sydney", correct: 1),
+        Trivia(question: "Which country was the first to allow women to vote in national elections?", firstOption: "Poland", secondOption: "United States", thirdOption: "Sweden", fourthOption: "Senegal", correct: 1),
+        Trivia(question: "Which of these countries won the most medals in the 2012 Summer Olympics?", firstOption: "France", secondOption: "Germany", thirdOption: "Japan", fourthOption: "Great Britain", correct: 4)
+        ]
     
     @IBOutlet weak var questionField: UILabel!
     @IBOutlet weak var playAgainButton: UIButton!
@@ -49,6 +52,7 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        initialSetup()
         loadGameStartSound()
         // Start game
         playGameStartSound()
@@ -60,10 +64,31 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    func initialSetup() {
+        firstChoiceButton.layer.cornerRadius = 15
+        secondChoiceButton.layer.cornerRadius = 15
+        thirdChoiceButton.layer.cornerRadius = 15
+        fourthChoiceButton.layer.cornerRadius = 15
+        playAgainButton.layer.cornerRadius = 15
+        defaultChoiceButtonColor = firstChoiceButton.backgroundColor!
+    }
+    
+    func resetButtonColor() {
+        firstChoiceButton.backgroundColor = defaultChoiceButtonColor
+        secondChoiceButton.backgroundColor = defaultChoiceButtonColor
+        thirdChoiceButton.backgroundColor = defaultChoiceButtonColor
+        fourthChoiceButton.backgroundColor = defaultChoiceButtonColor
+    }
+    
     func displayQuestion() {
-        indexOfSelectedQuestion = GKRandomSource.sharedRandom().nextInt(upperBound: trivia.count)
-        let questionDictionary = trivia[indexOfSelectedQuestion]
-        questionField.text = questionDictionary["Question"]
+        resetButtonColor()
+        indexOfSelectedQuestion = GKRandomSource.sharedRandom().nextInt(upperBound: questionList.count)
+        let questionDictionary = questionList[indexOfSelectedQuestion]
+        questionField.text = questionDictionary.question
+        firstChoiceButton.setTitle(questionDictionary.firstOption, for: .normal)
+        secondChoiceButton.setTitle(questionDictionary.secondOption, for: .normal)
+        thirdChoiceButton.setTitle(questionDictionary.thirdOption, for: .normal)
+        fourthChoiceButton.setTitle(questionDictionary.fourthOption, for: .normal)
         playAgainButton.isHidden = true
     }
     
@@ -84,17 +109,35 @@ class ViewController: UIViewController {
         // Increment the questions asked counter
         questionsAsked += 1
         
-        let selectedQuestionDict = trivia[indexOfSelectedQuestion]
-        let correctAnswer = selectedQuestionDict["Answer"]
+        let selectedQuestionDict = questionList[indexOfSelectedQuestion]
+        let correctAnswer = selectedQuestionDict.correct
         
-        if (sender === trueButton &&  correctAnswer == "True") || (sender === falseButton && correctAnswer == "False") {
+        if (sender === firstChoiceButton && correctAnswer == 1) || (sender === secondChoiceButton && correctAnswer == 2) || (sender === thirdChoiceButton && correctAnswer == 3) || (sender === fourthChoiceButton && correctAnswer == 4) {
             correctQuestions += 1
             questionField.text = "Correct!"
+            highlightButton(for: sender, with: "green")
         } else {
             questionField.text = "Sorry, wrong answer!"
+            switch correctAnswer {
+            case 1: highlightButton(for: firstChoiceButton, with: "green")
+            case 2: highlightButton(for: secondChoiceButton, with: "green")
+            case 3: highlightButton(for: thirdChoiceButton, with: "green")
+            case 4: highlightButton(for: fourthChoiceButton, with: "green")
+            default: print("This should never be printed")
+            }
+            highlightButton(for: sender, with: "red")
         }
-        
-        loadNextRoundWithDelay(seconds: 2)
+        loadNextRoundWithDelay(seconds: 1)
+    }
+    
+    func highlightButton(for button: UIButton, with color: String) {
+        if color == "red" {
+            button.backgroundColor = UIColor.red
+        } else if color == "green" {
+            button.backgroundColor = UIColor.green
+        } else {
+            print("Nothing Happened!")
+        }
     }
     
     func nextRound() {
