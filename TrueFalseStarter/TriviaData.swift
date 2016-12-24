@@ -14,7 +14,7 @@ struct Trivia {
     let firstOption: String
     let secondOption: String
     let thirdOption: String
-    let fourthOption: String?
+    let fourthOption: String
     let correct: Int
 }
 
@@ -25,13 +25,15 @@ struct Questions {
         Trivia(question: "In what year was the United Nations founded?", firstOption: "1918", secondOption: "1919", thirdOption: "1945", fourthOption: "1954", correct: 3),
         Trivia(question: "The Titanic departed from the United Kingdom, where was it supposed to arrive?", firstOption: "Paris", secondOption: "Washington D.C.", thirdOption: "New York City", fourthOption: "Boston", correct: 3),
         Trivia(question: "Which nation produes the most oil?", firstOption: "Iran", secondOption: "Iraq", thirdOption: "Brazil", fourthOption: "Canada", correct: 4),
-        Trivia(question: "Which country has most recently won consecurive World Cups in soccer?", firstOption: "Italy", secondOption: "Brazil", thirdOption: "Argentina", fourthOption: "Spain", correct: 2),
+        Trivia(question: "Which country has most recently won consecutive World Cups in soccer?", firstOption: "Italy", secondOption: "Brazil", thirdOption: "Argentina", fourthOption: "Spain", correct: 2),
         Trivia(question: "Which of the following rivers is longest?", firstOption: "Yangtze", secondOption: "Mississippi", thirdOption: "Congo", fourthOption: "Mekong", correct: 2),
         Trivia(question: "Which city is the oldest?", firstOption: "Mexico City", secondOption: "Cape Town", thirdOption: "San Juan", fourthOption: "Sydney", correct: 1),
         Trivia(question: "Which country was the first to allow women to vote in national elections?", firstOption: "Poland", secondOption: "United States", thirdOption: "Sweden", fourthOption: "Senegal", correct: 1),
         Trivia(question: "Which of these countries won the most medals in the 2012 Summer Olympics?", firstOption: "France", secondOption: "Germany", thirdOption: "Japan", fourthOption: "Great Britain", correct: 4),
-        Trivia(question: "What is 111 * 111?", firstOption: "111111", secondOption: "12421", thirdOption: "12321", fourthOption: nil, correct: 3),
-        Trivia(question: "Let's say I have 23 candles. One night, I lit 8 of them, then I went to sleep.  How many candles are left in the morning?", firstOption: "23", secondOption: "15", thirdOption: "8", fourthOption: nil, correct: 2)
+        Trivia(question: "What is 111 * 111?", firstOption: "111111", secondOption: "12421", thirdOption: "12321", fourthOption: "", correct: 3),
+        Trivia(question: "Which weighs more? A pound of quarters or a pound of feather?", firstOption: "Quarters", secondOption: "Feathers", thirdOption: "None of the Above", fourthOption: "", correct: 3),
+        Trivia(question: "Divide 30 by half then add 25.  What is the answer?", firstOption: "40", secondOption: "55", thirdOption: "85", fourthOption: "", correct: 3),
+        Trivia(question: "Which digit appears the most frequenty between 1 through 1000 inclusive?", firstOption: "1", secondOption: "5", thirdOption: "0", fourthOption: "", correct: 1)
     ]
     
     /// Returns a specified number of questions
@@ -58,9 +60,6 @@ struct Questions {
             }
             iterator += 1
         }
-        print(questionList)
         return questionList
     }
-
-    
 }
